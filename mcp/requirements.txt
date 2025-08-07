@@ -1,0 +1,6 @@
+fastmcp
+uvicorn
+pyshark
+scapy
+manuf
+manuf2
