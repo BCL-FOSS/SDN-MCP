@@ -78,7 +78,9 @@ dockersetup() {
 
   sudo docker-compose build --no-cache 
 
-  sudo docker volume create --name=mcp_app_data
+  sudo docker volume create --name=proxy_mcp_data
+  sudo docker volume create --name=ubnt_mcp_data
+  sudo docker volume create --name=omada_mcp_data
   sudo docker volume create --name=caddy_data
   sudo docker volume create --name=caddy_config
   sudo docker-compose up

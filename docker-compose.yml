@@ -1,12 +1,30 @@
 services:
-  mcp:
+  omadamcp:
     restart: always
     build:
       context: .
-      dockerfile: mcp/Dockerfile
-    container_name: mcp
+      dockerfile: omadamcp/Dockerfile
+    container_name: omadamcp
     volumes:
-      - mcp_app_data:/home/quart/instance/apps
+      - omada_mcp_data:/home/quart/instance/apps
+
+  ubntmcp:
+    restart: always
+    build:
+      context: .
+      dockerfile: ubntmcp/Dockerfile
+    container_name: ubntmcp
+    volumes:
+      - ubnt_mcp_data:/home/quart/instance/apps
+
+  proxymcp:
+    restart: always
+    build:
+      context: .
+      dockerfile: proxymcp/Dockerfile
+    container_name: proxymcp
+    volumes:
+      - proxy_mcp_data:/home/quart/instance/apps
 
   caddy:
     image: caddy:latest
@@ -20,10 +38,16 @@ services:
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
-      - mcp
+      - proxymcp
+      - ubntmcp
+      - omadamcp
 
 volumes:
-  mcp_app_data:
+  proxy_mcp_data:
+    external: true
+  ubnt_mcp_data:
+    external: true
+  omada_mcp_data:
     external: true
   caddy_data:
     external: true

@@ -3,7 +3,7 @@
 mcp.baughcl.tech {
 
     handle /mcp* {
-		reverse_proxy mcp:4200
+		reverse_proxy proxymcp:6200
 	}
 
 }
