@@ -8,6 +8,10 @@ RUN apt-get upgrade -y
 
 WORKDIR /home/quart
 
+RUN mkdir /home/quart/instance
+
+RUN mkdir /home/quart/instance/apps
+
 COPY mcp/requirements.txt ./
 
 RUN pip install --no-cache-dir -r requirements.txt --upgrade 
