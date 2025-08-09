@@ -1,3 +1,3 @@
 #!/bin/sh
 
-python mcp.py
+python ubntmcp.py

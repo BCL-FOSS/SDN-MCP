@@ -1,7 +1,7 @@
 from fastmcp import FastMCP
 from sdn_tools.OmadaAPI import OmadaAPI
 
-mcp = FastMCP(name="SDNAutomationServer")
+mcp = FastMCP(name="OmadaAutomation")
 
 if __name__ == "__main__":
     mcp.run(

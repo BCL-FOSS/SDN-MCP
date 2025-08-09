@@ -1,3 +1,3 @@
 #!/bin/sh
 
-python mcp.py
+python omadamcp.py
