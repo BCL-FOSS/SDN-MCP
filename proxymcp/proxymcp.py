@@ -12,11 +12,11 @@ from fastmcp.server.proxy import ProxyClient
 config = {
     "mcpServers": {
         "omada": {
-            "url": "omadamcp:5200/mcp",
+            "url": "http://omadamcp:5200/mcp",
             "transport": "http"
         },
         "ubnt": {
-            "url": "ubntmcp:4200/mcp",
+            "url": "http://ubntmcp:4200/mcp",
             "transport": "http"
         }
     }
