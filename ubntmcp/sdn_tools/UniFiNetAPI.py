@@ -1,13 +1,6 @@
 import aiohttp
 import uuid
-from quart import Quart, jsonify, request, render_template
-import asyncio
-import time
-import redis
-import json
 import aiohttp
-from scapy.all import ARP, Ether, srp
-import pyshark
 import manuf
 import logging
 

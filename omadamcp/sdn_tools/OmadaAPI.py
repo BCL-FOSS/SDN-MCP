@@ -1,12 +1,4 @@
-from quart import Quart, jsonify, request, render_template
-import asyncio
-import time
-import redis
-import json
 import aiohttp
-from scapy.all import ARP, Ether, srp
-import pyshark
-import manuf
 
 class OmadaAPI():
     def __init__(self):
@@ -42,4 +34,4 @@ class OmadaAPI():
                 ap_name = ap_map.get(ap_mac, "Unknown")
                 self.store_device_ap_history(mac, ap_mac, ap_name)
 
-        return jsonify({"status": "tracked", "count": len(clients)})
+        return {"status": "tracked", "count": len(clients)}

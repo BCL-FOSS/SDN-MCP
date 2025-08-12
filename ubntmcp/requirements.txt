@@ -4,3 +4,4 @@ pyshark
 scapy
 manuf
 manuf2
+aiohttp
