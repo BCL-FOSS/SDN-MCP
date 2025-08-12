@@ -9,9 +9,13 @@ import aiohttp
 from scapy.all import ARP, Ether, srp
 import pyshark
 import manuf
+import logging
 
 vendor_lookup = manuf.MacParser()
 error_codes = [460, 472, 489]
+
+logging.basicConfig(level=logging.DEBUG)
+logging.getLogger('passlib').setLevel(logging.ERROR)
 
 class UniFiNetAPI():
 
@@ -29,6 +33,7 @@ class UniFiNetAPI():
         self.name = ''
         self.ubiquipy_client_session = aiohttp.ClientSession()
         self.url_string = f"{self.base_url}/api/s/" if self.is_udm else f"{self.base_url}/proxy/network/api/"
+        self.logger = logging.getLogger(__name__)
         """
         if is_udm:
             self.url_string = f"{self.base_url}/api/"
@@ -129,15 +134,15 @@ class UniFiNetAPI():
                                 csrf_token = cookie.split(';')[0].split('=')[1]
 
                         unifises = str(unifises_token)
-                        #print(unifises)
+                        #self.logger.debug(unifises)
                         csrf = str(csrf_token)
-                        #print(csrf)
+                        #self.logger.debug(csrf)
                         session_token = "unifises="+unifises + ";"+ "csrf_token="+csrf + ";"
                         self.token = session_token
                         self.id = self.gen_id()
                         self.auth_check = True
                         response.close()
-                        #print({"message": "Authentication successful", "data": response_data, "token": session_token, "id": self.id})
+                        #self.logger.debug({"message": "Authentication successful", "data": response_data, "token": session_token, "id": self.id})
                         return self.get_profile_data()
                     else:
                         response.close()
@@ -360,7 +365,7 @@ class UniFiNetAPI():
 
     async def site_settings(self, key='', id='', cmd='', site=''):
 
-        if not any ((key, id)):
+        if key and id != '':
             url = f"{self.url_string}/s/{site}/rest/setting/{key}/{id}"
         else:
             url = f"{self.url_string}/s/{site}/rest/setting"
@@ -778,15 +783,15 @@ class UniFiNetAPI():
                                       'mac': kwargs.get('mac')}
                 case 'U':
                     if url.strip() == '':
-                        print('Enter the URL for the firmware to update to.')
+                        self.logger.debug('Enter the URL for the firmware to update to.')
                     else:
-                        print('Updating...')
+                        self.logger.debug('Updating...')
                         payload = {'cmd': 'upgrade-external',
                                         'mac': kwargs.get('mac'),
                                         'url': kwargs.get('url')}
                 case 'm':
                     if self.inform_url.strip() == '':
-                        print('Enter the new inform URL to migrate the device: %s to.' % kwargs.get('mac'))
+                        self.logger.debug('Enter the new inform URL to migrate the device: %s to.' % kwargs.get('mac'))
                     else:
                         ('Migrating...')
                         payload = {'cmd': 'migrate',

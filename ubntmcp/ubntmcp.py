@@ -323,108 +323,236 @@ async def manage_sites(cntlr_data:dict, cmd: str, name: str, mac: str, site_id: 
     auth_rslt = await ubnt.authenticate()
     logger.debug(auth_rslt)
 
-    if desc != '':
-        managed_site=await ubnt.mgr_sites(cmd=cmd, name=name, desc=desc)
-    elif site_id and mac != '':
-        managed_site=await ubnt.mgr_sites(cmd=cmd, site_id=site_id, mac=mac)
+    managed_site=None
+
+    match cmd.strip():
+        case 'g':
+            managed_site=await ubnt.mgr_sites(cmd=cmd)
+
+        case 'a':
+            managed_site=await ubnt.mgr_sites(cmd=cmd, name=name, desc=desc)
+                   
+        case 'u':
+            managed_site=await ubnt.mgr_sites(cmd=cmd, name=name, desc=desc)
+       
+        case 'r':
+            managed_site=await ubnt.mgr_sites(cmd=cmd, name=name)
+                    
+        case 'm':
+            managed_site=await ubnt.mgr_sites(cmd=cmd, site_id=site_id, mac=mac)
+                    
+        case 'd':
+            managed_site=await ubnt.mgr_sites(cmd=cmd, mac=mac)
 
     logger.debug(managed_site)
     return managed_site
 
 @mcp.tool
-async def port_forwards(cntlr_data:dict, opt: dict) -> dict:
-    ubnt = UniFiNetAPI()
+async def port_forwards(cntlr_data:dict, site: str) -> dict:
+    host=cntlr_data.get('ip')
+    port=cntlr_data.get('port')
+    uname=cntlr_data.get('uname')
+    passwd=cntlr_data.get('pwd')
+
+    ubnt = UniFiNetAPI(controller_ip=host, controller_port=port, username=uname, password=passwd)
     auth_rslt = await ubnt.authenticate()
-    site = opt.get('site')
-    await ubnt.port_forwards()
+    logger.debug(auth_rslt)
+
+    ports=await ubnt.port_forwards(site=site)
+    logger.debug(ports)
+    return ports
 
 @mcp.tool
-async def radius_accounts(cntlr_data:dict, opt: dict) -> dict:
-    ubnt = UniFiNetAPI()
+async def radius_accounts(cntlr_data:dict, cmd: str, site: str) -> dict:
+    host=cntlr_data.get('ip')
+    port=cntlr_data.get('port')
+    uname=cntlr_data.get('uname')
+    passwd=cntlr_data.get('pwd')
+
+    ubnt = UniFiNetAPI(controller_ip=host, controller_port=port, username=uname, password=passwd)
     auth_rslt = await ubnt.authenticate()
-    site = opt.get('site')
-    await ubnt.radius_accounts()
+    logger.debug(auth_rslt)
+
+    accounts=await ubnt.radius_accounts(cmd=cmd, site=site)
+    logger.debug(accounts)
+    return accounts
 
 @mcp.tool
-async def radius_profiles(cntlr_data:dict, opt: dict) -> dict:
-    ubnt = UniFiNetAPI()
+async def radius_profiles(cntlr_data:dict, cmd: str, site: str) -> dict:
+    host=cntlr_data.get('ip')
+    port=cntlr_data.get('port')
+    uname=cntlr_data.get('uname')
+    passwd=cntlr_data.get('pwd')
+
+    ubnt = UniFiNetAPI(controller_ip=host, controller_port=port, username=uname, password=passwd)
     auth_rslt = await ubnt.authenticate()
-    site = opt.get('site')
-    await ubnt.radius_profiles()
+    logger.debug(auth_rslt)
+
+    profiles=await ubnt.radius_profiles(cmd=cmd, site=site)
+    logger.debug(profiles)
+    return profiles
 
 @mcp.tool
-async def reports(cntlr_data:dict, opt: dict) -> dict:
-    ubnt = UniFiNetAPI()
+async def reports(cntlr_data:dict, site: str, macs: list) -> dict:
+    host=cntlr_data.get('ip')
+    port=cntlr_data.get('port')
+    uname=cntlr_data.get('uname')
+    passwd=cntlr_data.get('pwd')
+
+    ubnt = UniFiNetAPI(controller_ip=host, controller_port=port, username=uname, password=passwd)
     auth_rslt = await ubnt.authenticate()
-    site = opt.get('site')
-    await ubnt.reports()
+    logger.debug(auth_rslt)
+
+    report=None
+
+    if macs != []:
+        report=await ubnt.reports(macs=macs, site=site)
+    else:
+        report=await ubnt.reports(site=site)
+
+    logger.debug(report)
+    return report
 
 @mcp.tool
-async def rf_scan_results(cntlr_data:dict, opt: dict) -> dict:
-    ubnt = UniFiNetAPI()
+async def rf_scan_results(cntlr_data:dict, mac: str, cmd: str, site: str) -> dict:
+    host=cntlr_data.get('ip')
+    port=cntlr_data.get('port')
+    uname=cntlr_data.get('uname')
+    passwd=cntlr_data.get('pwd')
+
+    ubnt = UniFiNetAPI(controller_ip=host, controller_port=port, username=uname, password=passwd)
     auth_rslt = await ubnt.authenticate()
-    site = opt.get('site')
-    await ubnt.rf_scan_results()
+    logger.debug(auth_rslt)
+
+    scan_result=await ubnt.rf_scan_results(mac=mac, cmd=cmd, site=site)
+    logger.debug(scan_result)
+    return scan_result
 
 @mcp.tool
-async def rogue_aps(cntlr_data:dict, opt: dict) -> dict:
-    ubnt = UniFiNetAPI()
+async def rogue_aps(cntlr_data:dict, site: str, seen_last: int=0) -> dict:
+    host=cntlr_data.get('ip')
+    port=cntlr_data.get('port')
+    uname=cntlr_data.get('uname')
+    passwd=cntlr_data.get('pwd')
+
+    ubnt = UniFiNetAPI(controller_ip=host, controller_port=port, username=uname, password=passwd)
     auth_rslt = await ubnt.authenticate()
-    site = opt.get('site')
-    await ubnt.rogue_aps()
+    logger.debug(auth_rslt)
+
+    aps=None
+    if seen_last != 0:
+        aps=await ubnt.rogue_aps(seen_last=seen_last, site=site)
+    else: 
+        aps=await ubnt.rogue_aps(site=site)
+
+    logger.debug(aps)
+    return aps
+
 
 @mcp.tool
 async def site_dpi_data(cntlr_data:dict, cmd: str, site: str, type: bool = False) -> dict:
-    ubnt = UniFiNetAPI()
+    host=cntlr_data.get('ip')
+    port=cntlr_data.get('port')
+    uname=cntlr_data.get('uname')
+    passwd=cntlr_data.get('pwd')
+
+    ubnt = UniFiNetAPI(controller_ip=host, controller_port=port, username=uname, password=passwd)
     auth_rslt = await ubnt.authenticate()
     logger.debug(auth_rslt)
 
     dpi_data = await ubnt.site_dpi_data(site=site, cmd=cmd, type=type)
     logger.debug(dpi_data)
-  
     return dpi_data
 
 @mcp.tool
-async def site_settings(cntlr_data:dict, opt: dict) -> dict:
-    ubnt = UniFiNetAPI()
+async def site_settings(cntlr_data:dict, cmd: str, site: str, key: str='', id: str='') -> dict:
+    host=cntlr_data.get('ip')
+    port=cntlr_data.get('port')
+    uname=cntlr_data.get('uname')
+    passwd=cntlr_data.get('pwd')
+
+    ubnt = UniFiNetAPI(controller_ip=host, controller_port=port, username=uname, password=passwd)
     auth_rslt = await ubnt.authenticate()
-    site = opt.get('site')
-    await ubnt.site_settings()
+    logger.debug(auth_rslt)
+
+    settings=await ubnt.site_settings(key=key, id=id, cmd=cmd, site=site)
+    logger.debug(settings)
+    return settings
 
 @mcp.tool
-async def site_stats(cntlr_data:dict, opt: dict) -> dict:
-    ubnt = UniFiNetAPI()
+async def site_stats(cntlr_data:dict) -> dict:
+    host=cntlr_data.get('ip')
+    port=cntlr_data.get('port')
+    uname=cntlr_data.get('uname')
+    passwd=cntlr_data.get('pwd')
+
+    ubnt = UniFiNetAPI(controller_ip=host, controller_port=port, username=uname, password=passwd)
     auth_rslt = await ubnt.authenticate()
-    site = opt.get('site')
-    await ubnt.site_stats()
+    logger.debug(auth_rslt)
+
+    stats=await ubnt.site_stats()
+    logger.debug(stats)
+    return stats
 
 @mcp.tool
-async def sites(cntlr_data:dict, opt: dict) -> dict:
-    ubnt = UniFiNetAPI()
+async def sites(cntlr_data:dict) -> dict:
+    host=cntlr_data.get('ip')
+    port=cntlr_data.get('port')
+    uname=cntlr_data.get('uname')
+    passwd=cntlr_data.get('pwd')
+
+    ubnt = UniFiNetAPI(controller_ip=host, controller_port=port, username=uname, password=passwd)
     auth_rslt = await ubnt.authenticate()
-    site = opt.get('site')
-    await ubnt.sites()
+    logger.debug(auth_rslt)
+
+    sites=await ubnt.sites()
+    logger.debug(sites)
+    return sites
 
 @mcp.tool
-async def udm_poweroff(cntlr_data:dict, opt: dict) -> dict:
-    ubnt = UniFiNetAPI()
+async def udm_poweroff(cntlr_data:dict) -> dict:
+    host=cntlr_data.get('ip')
+    port=cntlr_data.get('port')
+    uname=cntlr_data.get('uname')
+    passwd=cntlr_data.get('pwd')
+
+    ubnt = UniFiNetAPI(controller_ip=host, controller_port=port, username=uname, password=passwd)
     auth_rslt = await ubnt.authenticate()
-    site = opt.get('site')
-    await ubnt.udm_poweroff()
+    logger.debug(auth_rslt)
+
+    off=await ubnt.udm_poweroff()
+    logger.debug(off)
+    return off
 
 @mcp.tool
 async def udm_reboot(cntlr_data:dict, opt: dict) -> dict:
-    ubnt = UniFiNetAPI()
+    host=cntlr_data.get('ip')
+    port=cntlr_data.get('port')
+    uname=cntlr_data.get('uname')
+    passwd=cntlr_data.get('pwd')
+
+    ubnt = UniFiNetAPI(controller_ip=host, controller_port=port, username=uname, password=passwd)
     auth_rslt = await ubnt.authenticate()
-    site = opt.get('site')
-    await ubnt.udm_reboot()
+    logger.debug(auth_rslt)
+
+    cycle=await ubnt.udm_reboot()
+    logger.debug(cycle)
+    return cycle
 
 @mcp.tool
-async def wlans(cntlr_data:dict, opt: dict) -> dict:
-    ubnt = UniFiNetAPI()
+async def wlans(cntlr_data:dict, cmd: str, site: str, name: str='', pwd: str='', site_id: str='', wlan_id: str='') -> dict:
+    host=cntlr_data.get('ip')
+    port=cntlr_data.get('port')
+    uname=cntlr_data.get('uname')
+    passwd=cntlr_data.get('pwd')
+
+    ubnt = UniFiNetAPI(controller_ip=host, controller_port=port, username=uname, password=passwd)
     auth_rslt = await ubnt.authenticate()
-    site = opt.get('site')
-    await ubnt.wlans()
+    logger.debug(auth_rslt)
+
+    wlan=await ubnt.wlans(cmd=cmd, site=site, wlan_name=name, psswd=pwd, site_id=site_id, wlan_id=wlan_id)
+    logger.debug(wlan)
+    return wlan
 
 if __name__ == "__main__":
     mcp.run(
