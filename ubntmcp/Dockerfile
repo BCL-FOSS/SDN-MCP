@@ -12,11 +12,11 @@ RUN mkdir /home/quart/instance
 
 RUN mkdir /home/quart/instance/apps
 
-COPY mcp/requirements.txt ./
+COPY ubntmcp/requirements.txt ./
 
 RUN pip install --no-cache-dir -r requirements.txt --upgrade 
 
-COPY mcp/ /home/quart/
+COPY ubntmcp/ /home/quart/
 
 RUN chmod +x boot.sh
 
