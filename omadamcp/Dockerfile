@@ -14,7 +14,7 @@ RUN mkdir /home/quart/instance/apps
 
 COPY omadamcp/requirements.txt ./
 
-RUN pip install --no-cache-dir -r requirements.txt --upgrade 
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY omadamcp/ /home/quart/
 

@@ -14,7 +14,7 @@ RUN mkdir /home/quart/instance/apps
 
 COPY proxymcp/requirements.txt ./
 
-RUN pip install --no-cache-dir -r requirements.txt --upgrade 
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY proxymcp/ /home/quart/
 

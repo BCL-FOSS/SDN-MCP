@@ -14,7 +14,7 @@ RUN mkdir /home/quart/instance/apps
 
 COPY ubntmcp/requirements.txt ./
 
-RUN pip install --no-cache-dir -r requirements.txt --upgrade 
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ubntmcp/ /home/quart/
 
